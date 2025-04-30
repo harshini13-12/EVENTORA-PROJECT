@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Portal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css">
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      background-color: #f4f6f8;
+      color: #1e293b;
+    }
+    header {
+      background-color: #0f172a;
+      color: white;
+      padding: 20px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+    header h1 {
+      margin: 0;
+      font-size: 28px;
+      font-weight: 700;
+    }
+    .profile-menu {
+      position: relative;
+      cursor: pointer;
+    }
+    .profile-name {
+      font-weight: 600;
+      color: #38bdf8;
+    }
+    .dropdown {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 40px;
+      background-color: white;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      z-index: 10;
+      min-width: 200px;
+    }
+    .dropdown a {
+      display: block;
+      padding: 12px;
+      color: #1e293b;
+      text-decoration: none;
+    }
+    .dropdown a:hover {
+      background-color: #f1f5f9;
+    }
+    .container {
+      display: flex;
+      padding: 30px;
+      gap: 24px;
+    }
+    .sidebar {
+      width: 250px;
+      background-color: #1e293b;
+      color: white;
+      border-radius: 16px;
+      padding: 30px 24px;
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.1);
+    }
+    .sidebar h2 {
+      font-size: 18px;
+      margin-bottom: 14px;
+      color: #38bdf8;
+    }
+    .sidebar a {
+      display: block;
+      color: #cbd5e1;
+      text-decoration: none;
+      padding: 10px 0;
+      font-size: 16px;
+    }
+    .sidebar a:hover {
+      color: #fcd34d;
+      padding-left: 6px;
+    }
+    .main-content {
+      flex: 1;
+      display: flex;
+      gap: 24px;
+    }
+    .events-section {
+      flex: 2;
+    }
+    .back-arrow {
+      font-size: 20px;
+      display: inline-block;
+      margin-bottom: 10px;
+      color: #0284c7;
+      text-decoration: none;
+    }
+    .event-card {
+      background: #ffffff;
+      padding: 24px;
+      border-radius: 14px;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+      margin-bottom: 24px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .event-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+    }
+    .event-card h3 {
+      margin: 0 0 10px;
+      font-size: 20px;
+    }
+    .event-card h3 a {
+      color: #0284c7;
+      text-decoration: none;
+    }
+    .event-card p {
+      margin: 6px 0;
+      color: #475569;
+    }
+    .register-btn {
+      margin-top: 14px;
+      background-color: #10b981;
+      color: white;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .rightbar {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .card {
+      background: #ffffff;
+      padding: 24px;
+      border-radius: 14px;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+    }
+    #calendar {
+      margin-top: 12px;
+      max-width: 100%;
+      overflow: hidden;
+    }
+    .fc {
+      font-size: 14px;
+    }
+    .fc .fc-toolbar-title {
+      font-size: 18px;
+    }
+    input[type="text"],
+    input[type="url"],
+    input[type="datetime-local"],
+    textarea {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 16px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 16px;
+      resize: vertical;
+    }
+    textarea {
+      min-height: 120px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Admin Portal - Eventora</h1>
+    <div class="profile-menu" onclick="toggleDropdown()">
+      <span class="profile-name">👤 Shreya Tiwari ▾</span>
+      <div class="dropdown" id="profileDropdown">
+        <a href="#" onclick="loadSection('account')">Account</a>
+        <a href="#" onclick="loadSection('history')">Participation History</a>
+        <a href="#" onclick="loadSection('accomplishments')">Accomplishments</a>
+        <a href="#" onclick="loadSection('registered')">Registered Events</a>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <aside class="sidebar">
+      <h2>Menu</h2>
+      <a href="#">Profile</a>
+      <a href="#">Event Gallery</a>
+      <a href="#" onclick="loadSection('addEvent')">Add Event</a>
+      <a href="#">View Events</a>
+      <hr style="border: 1px solid #334155; margin: 16px 0;">
+      <a href="#">Settings</a>
+      <a href="#" onclick="logout()">Logout</a>
+    </aside>
+
+    <div class="main-content">
+      <div class="events-section" id="upcoming-events-section"></div>
+      <div class="rightbar">
+        <div class="card">
+          <h3>Calendar</h3>
+          <div id="calendar"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+  <script>
+    let calendar;
+
+    function logout() {
+      localStorage.clear();
+      window.location.href = "main.html";
+    }
+
+    function toggleDropdown() {
+      const dropdown = document.getElementById('profileDropdown');
+      dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+    }
+
+    function loadSection(section) {
+      const main = document.getElementById('upcoming-events-section');
+      main.innerHTML = '';
+      let content = `<a href="#" class="back-arrow" onclick="loadEvents()">← Back</a>`;
+
+      if (section === 'account') {
+        content += `<div class="event-card"><h3>Student Account</h3><p><strong>Name:</strong> Shreya Tiwari</p><p><strong>Email:</strong> admin@bennett.edu.in</p></div>`;
+      } else if (section === 'history') {
+        content += `<div class="event-card"><h3>Participation History</h3><p>Hackathon 2024</p><p>Tech Talk 2023</p></div>`;
+      } else if (section === 'accomplishments') {
+        content += `<div class="event-card"><h3>Accomplishments</h3><p>🥇 1st Place - Hackathon</p></div>`;
+      } else if (section === 'registered') {
+        content += `<div class="event-card"><h3>Registered Events</h3><p>Tech Talk: Future of AI</p></div>`;
+      } else if (section === 'addEvent') {
+        content += `
+          <div class="event-card">
+            <h3>Add New Event</h3>
+            <form id="addEventForm">
+              <label>Event Name:</label><input type="text" name="eventName" required>
+              <label>Category:</label><input type="text" name="category" required>
+              <label>Club:</label><input type="text" name="club" required>
+              <label>Venue:</label><input type="text" name="venue" required>
+              <label>Time:</label><input type="datetime-local" name="time" required>
+              <label>Registration Link:</label><input type="url" name="regLink" required>
+              <label>Event Description:</label><textarea name="description" required></textarea>
+              <button type="submit" class="register-btn">Add Event</button>
+            </form>
+          </div>`;
+      }
+
+      main.innerHTML = content;
+    }
+
+    async function loadEvents() {
+      const section = document.getElementById('upcoming-events-section');
+      section.innerHTML = '';
+
+      try {
+        const res = await fetch('http://localhost:3000/api/events');
+        const events = await res.json();
+
+        calendar.removeAllEvents(); // Clear previous events
+
+        events.forEach(ev => {
+          const time = new Date(ev.time).toLocaleString();
+          section.innerHTML += `
+            <div class="event-card">
+              <h3><a href="${ev.regLink}" target="_blank">${ev.eventName}</a></h3>
+              <p>📍 ${ev.venue}</p>
+              <p>📅 ${time}</p>
+              <p>${ev.description}</p>
+              <button class="register-btn" onclick="window.open('${ev.regLink}', '_blank')">Register</button>
+            </div>`;
+
+          calendar.addEvent({
+            title: ev.eventName,
+            start: ev.time,
+            allDay: false
+          });
+        });
+      } catch (err) {
+        section.innerHTML = `<p style="color:red;">Failed to load events. Server might be down.</p>`;
+      }
+    }
+
+    document.addEventListener('submit', async function(e) {
+      if (e.target && e.target.id === 'addEventForm') {
+        e.preventDefault();
+        const form = e.target;
+        const data = {
+          eventName: form.eventName.value,
+          category: form.category.value,
+          club: form.club.value,
+          venue: form.venue.value,
+          time: form.time.value,
+          regLink: form.regLink.value,
+          description: form.description.value
+        };
+
+        try {
+          const res = await fetch('http://localhost:3000/api/events', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+          });
+
+          if (!res.ok) {
+            alert("Failed to add event.");
+            return;
+          }
+
+          alert("Event added successfully!");
+          loadEvents(); // Refresh list & calendar
+        } catch (err) {
+          alert("Network error. Could not add event.");
+        }
+      }
+    });
+
+    window.onload = () => {
+      const calendarEl = document.getElementById('calendar');
+      calendar = new FullCalendar.Calendar(calendarEl, { initialView: 'dayGridMonth' });
+      calendar.render();
+      loadEvents();
+    };
+  </script>
+</body>
+</html>
